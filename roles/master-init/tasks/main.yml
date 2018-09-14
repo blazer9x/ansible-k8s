@@ -13,15 +13,30 @@
     dest: ~/flannel.sh
 
 - name: Executes Master-Up Scripts
-  shell: master-up.sh >> master-up.logs
-  chdir: "/{{ ansible_user }}"
+  shell: |
+    kubeadm init \
+      --apiserver-advertise-address {{ansible_host}} \
+      --pod-network-cidr {{ansible_host}}/24 \
+      --apiserver-cert-extra-sans {{ansible_hostname}}.{{common.domain_name}} \
+      --service-dns-domain {{common.domain_name}}
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
   args:
     chdir: "/{{ ansible_user }}"
     creates: master-up.logs
+  register: master-up
+
+- name: debug master-up outputs
+  debug: msg={{ master-up }}
 
 - name: Executes Flannel Scripts
-  shell: flannel.sh >> flannel.logs
-  chdir: "/{{ ansible_user }}"
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   args:
     chdir: "/{{ ansible_user }}"
     creates: flannel.logs
+  register: flannel
+
+- name: debug flannel outputs
+  debug: msg={{ flannel }}
