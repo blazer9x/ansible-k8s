@@ -28,8 +28,10 @@
 
 - include: canal.yml
 
-- include: dashboard.yml
+#- include: dashboard.yml
+#- include: heapster.yml
 
 - name: Don't run anything on Master with Taint
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
+  ignore_errors: yes

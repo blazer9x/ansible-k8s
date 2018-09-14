@@ -14,9 +14,16 @@
     regexp: 'canal_iface:.*'
     replace: 'canal_iface: "enp0s8"'
 
-- name: Execute Canal Scripts
+- name: Execute Rbac Scripts (1)
   shell: |
     kubectl apply -f rbac.yaml
+  register: rbacstatus
+  args:
+    chdir: "~"
+    creates: rbac.logs
+
+- name: Execute Canal Scripts (2)
+  shell: |
     kubectl apply -f canal.yaml
   register: canalstatus
   args:

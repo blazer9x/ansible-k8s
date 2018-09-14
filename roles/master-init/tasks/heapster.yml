@@ -1,0 +1,16 @@
+---
+- git:
+    repo: "https://github.com/kubernetes/heapster.git"
+    dest: "~/heapster"
+    clone: yes
+    update: yes
+    remote: master
+
+- name: Execute Heapster Command
+  shell: |
+    kubectl create -f deploy/kube-config/influxdb/
+    kubectl create -f deploy/kube-config/rbac/heapster-rbac.yaml
+  register: heapsterstatus
+  args:
+    chdir: "~/heapster"
+    creates: heapster.logs
