@@ -1,0 +1,8 @@
+---
+- hostname:
+    name: "{{ ansible_hostname }}"
+
+- name: Hosts File Override
+  template:
+    src: master-up.sh
+    dest: ~/master-up.sh
