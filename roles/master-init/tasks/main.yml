@@ -14,12 +14,14 @@
 
 - name: Executes Master-Up Scripts
   shell: master-up.sh >> master-up.logs
+  chdir: "/{{ ansible_user }}"
   args:
     chdir: "/{{ ansible_user }}"
     creates: master-up.logs
 
 - name: Executes Flannel Scripts
   shell: flannel.sh >> flannel.logs
+  chdir: "/{{ ansible_user }}"
   args:
     chdir: "/{{ ansible_user }}"
     creates: flannel.logs
