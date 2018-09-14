@@ -1,0 +1,26 @@
+---
+- name: Import Main Variables - is a must!
+  hosts: all
+  remote_user: root
+  tasks:
+  - name: Include Variables First
+    include_vars:
+      file: "{{ item }}"
+    with_items:
+    - group_vars/main.yml
+
+- name: Master
+  hosts: master
+  remote_user: root
+  vars:
+    ansible_hostname: master1
+  roles:
+    - common
+
+- name: Worker
+  hosts: worker
+  remote_user: root
+  vars:
+    ansible_hostname: "{{ inventory_hostname }}"
+  roles:
+    - common

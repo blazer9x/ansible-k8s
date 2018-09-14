@@ -1,0 +1,15 @@
+---
+- name: br-netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present

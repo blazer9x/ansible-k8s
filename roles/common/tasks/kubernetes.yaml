@@ -1,0 +1,45 @@
+---
+- name: Yum for K8s
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - yum-utils
+   - device-mapper-persistent-data
+   - lvm2
+
+- name: Get docker-ce Repo
+  shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  ignore_errors: yes
+
+- name: Yum for Docker-CE
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - docker-ce
+
+# - name: Kubernetes.repo template
+#   template:
+#     src: kubernetes.repo
+#     dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Kubernetes Repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes by Google
+    file: kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: no
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    repo_gpgcheck: no
+    state: present
+
+- name: Yum for Kubernetes
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - kubelet
+   - kubeadm
+   - kubectl

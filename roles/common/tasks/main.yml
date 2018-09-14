@@ -1,0 +1,42 @@
+---
+- hostname:
+    name: "{{ ansible_hostname }}"
+
+- name: Hosts File Override
+  template:
+    src: hosts.txt
+    dest: /etc/hosts.txt
+
+- name: Install Main Ansible Package in Remote Servers
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - libselinux-python
+   - epel-release
+
+# Turn off and disable services
+- selinux:
+    policy: targeted
+    state: permissive
+- service:
+    name: iptables
+    enabled: no
+    state: stopped
+- service:
+    name: firewalld
+    enabled: no
+    state: stopped
+- service:
+    name: ip6tables
+    enabled: no
+    state: stopped
+
+# Users and Groups
+- include: users.yaml
+
+# BR-Netfilter
+- include: br-netfilter.yaml
+
+# Kubernetes Repos and Tools
+- include: kubernetes.yaml

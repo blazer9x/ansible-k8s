@@ -1,0 +1,35 @@
+---
+# Users and Groups
+## python -c 'import crypt; print crypt.crypt("password", "password")';
+- name: Add Group users
+  group:
+    name: "{{ common.linux_user }}"
+    state: present
+
+- name: Add Linux Users
+  user:
+    name: "{{ common.linux_user }}"
+    groups: "{{ common.linux_user }}"
+    append: yes
+    state: present
+    createhome: yes
+    password: "{{ common.linux_user_password }}"
+
+- name: Change ROOT Password
+  user:
+    name: root
+    append: yes
+    state: present
+    password: "{{ common.root_password }}"
+
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow wheel group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
