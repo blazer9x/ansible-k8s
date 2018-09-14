@@ -7,7 +7,7 @@
     src: hosts.txt
     dest: /etc/hosts
 
-- name: Install Main Ansible Package in Remote Servers
+- name: Install Main Package in Remote Servers
   yum:
     name: "{{ item }}"
     state: installed
@@ -15,6 +15,15 @@
    - libselinux-python
    - epel-release
    - iptables-services
+
+- name: Install Additional Packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - dstat
+   - htop
+   - net-tools
 
 # Turn off and disable services
 - selinux:
@@ -37,10 +46,10 @@
 - include: disable-swap.yml
 
 # Users and Groups
-- include: users.yaml
+- include: users.yml
 
 # BR-Netfilter
-- include: br-netfilter.yaml
+- include: br-netfilter.yml
 
 # Kubernetes Repos and Tools
-- include: kubernetes.yaml
+- include: kubernetes.yml

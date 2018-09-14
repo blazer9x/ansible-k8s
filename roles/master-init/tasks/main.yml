@@ -2,17 +2,7 @@
 - hostname:
     name: "{{ ansible_hostname }}"
 
-- name: Master-Up Template Scripts
-  template:
-    src: master-up.sh
-    dest: ~/master-up.sh
-
-- name: Flannel Network Template Scripts
-  template:
-    src: flannel.sh
-    dest: ~/flannel.sh
-
-- name: Executes Master-Up Scripts
+- name: Executes Master-Up Command
   shell: |
     kubeadm init \
       --apiserver-advertise-address {{ansible_host}} \
@@ -22,21 +12,24 @@
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  register: masterstatus
   args:
     chdir: "/{{ ansible_user }}"
     creates: master-up.logs
-  register: master-up
 
 - name: debug master-up outputs
-  debug: msg={{ master-up }}
+  debug:
+    var: masterstatus.stdout_lines
 
-- name: Executes Flannel Scripts
+- name: Copy master-up outputs
+  copy:
+    content: "{{ masterstatus.stdout_lines }}"
+    dest: "/{{ ansible_user }}/master-up.logs"
+
+- include: canal.yml
+
+- include: dashboard.yml
+
+- name: Don't run anything on Master with Taint
   shell: |
-    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-  args:
-    chdir: "/{{ ansible_user }}"
-    creates: flannel.logs
-  register: flannel
-
-- name: debug flannel outputs
-  debug: msg={{ flannel }}
+    kubectl taint nodes --all node-role.kubernetes.io/master-

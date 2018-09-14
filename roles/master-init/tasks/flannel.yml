@@ -1,0 +1,17 @@
+---
+- name: Executes Flannel Scripts
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  register: flannelstatus
+  args:
+    chdir: "/{{ ansible_user }}"
+    creates: flannel.logs
+
+- name: debug flannel outputs
+  debug:
+    var: flannelstatus.stdout_lines
+
+- name: Copy flannel outputs
+  copy:
+    content: "{{ flannelstatus.stdout_lines }}"
+    dest: "/{{ ansible_user }}/flannel.logs"

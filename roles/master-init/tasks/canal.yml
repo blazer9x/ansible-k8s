@@ -1,0 +1,24 @@
+---
+- name: Get RBAC for Canal Scripts
+  get_url:
+    url: https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/rbac.yaml
+    dest: ~/rbac.yaml
+
+- name: Get Canal Scripts
+  get_url:
+    url: https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/canal/canal.yaml
+    dest: ~/canal.yaml
+
+- replace:
+    path: ~/canal.yaml
+    regexp: 'canal_iface:.*'
+    replace: 'canal_iface: "enp0s8"'
+
+- name: Execute Canal Scripts
+  shell: |
+    kubectl apply -f rbac.yaml
+    kubectl apply -f canal.yaml
+  register: canalstatus
+  args:
+    chdir: "~"
+    creates: canal.logs

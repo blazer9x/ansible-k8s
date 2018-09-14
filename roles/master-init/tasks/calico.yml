@@ -1,0 +1,17 @@
+---
+- name: Executes Calico Scripts
+  shell: |
+    kubectl apply -f https://docs.projectcalico.org/v2.0/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml
+  register: calicostatus
+  args:
+    chdir: "/{{ ansible_user }}"
+    creates: calico.logs
+
+- name: debug calico outputs
+  debug:
+    var: calicostatus.stdout_lines
+
+- name: Copy calico outputs
+  copy:
+    content: "{{ calicostatus.stdout_lines }}"
+    dest: "/{{ ansible_user }}/calico.logs"

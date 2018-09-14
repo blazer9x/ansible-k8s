@@ -1,0 +1,17 @@
+---
+- name: Executes Dashboard Scripts
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+  register: dashboardstatus
+  args:
+    chdir: "/{{ ansible_user }}"
+    creates: dashboard.logs
+
+- name: debug dashboard outputs
+  debug:
+    var: dashboardstatus.stdout_lines
+
+- name: Copy dashboard outputs
+  copy:
+    content: "{{ dashboardstatus.stdout_lines }}"
+    dest: "/{{ ansible_user }}/dashboard.logs"
