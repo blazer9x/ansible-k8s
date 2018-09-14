@@ -5,7 +5,7 @@
 - name: Hosts File Override
   template:
     src: hosts.txt
-    dest: /etc/hosts.txt
+    dest: /etc/hosts
 
 - name: Install Main Ansible Package in Remote Servers
   yum:
@@ -31,6 +31,9 @@
     name: ip6tables
     enabled: no
     state: stopped
+
+# Disable swap
+- include: disable-swap.yml
 
 # Users and Groups
 - include: users.yaml

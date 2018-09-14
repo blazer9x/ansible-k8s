@@ -19,11 +19,6 @@
   with_items:
    - docker-ce
 
-# - name: Kubernetes.repo template
-#   template:
-#     src: kubernetes.repo
-#     dest: /etc/yum.repos.d/kubernetes.repo
-
 - name: Kubernetes Repository
   yum_repository:
     name: kubernetes
@@ -43,3 +38,13 @@
    - kubelet
    - kubeadm
    - kubectl
+
+# Enabling Services
+- service:
+    name: docker
+    enabled: yes
+    state: started
+- service:
+    name: kubelet
+    enabled: yes
+    state: started

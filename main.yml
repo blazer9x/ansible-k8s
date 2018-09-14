@@ -13,7 +13,7 @@
   hosts: master
   remote_user: root
   vars:
-    ansible_hostname: master1
+    ansible_hostname: "{{ inventory_hostname }}"
   roles:
     - common
 

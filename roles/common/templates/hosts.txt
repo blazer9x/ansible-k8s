@@ -1,2 +1,11 @@
 127.0.0.1     localhost localhost.localdomain localhost4 localhost4.localdomain4
 127.0.0.1     {{ ansible_hostname }}
+
+# Ansible Managed Etc Hosts
+{% for servers in groups['master'] %}
+{{ hostvars[servers]['ansible_host'] }} {{ hostvars[servers]['inventory_hostname'] }}
+{% endfor %}
+
+{% for servers in groups['worker'] %}
+{{ hostvars[servers]['ansible_host'] }} {{ hostvars[servers]['inventory_hostname'] }}
+{% endfor %}
