@@ -2,7 +2,24 @@
 - hostname:
     name: "{{ ansible_hostname }}"
 
-- name: Hosts File Override
+- name: Master-Up Template Scripts
   template:
     src: master-up.sh
     dest: ~/master-up.sh
+
+- name: Flannel Network Template Scripts
+  template:
+    src: flannel.sh
+    dest: ~/flannel.sh
+
+- name: Executes Master-Up Scripts
+  shell: master-up.sh > master-up.logs
+  args:
+    chdir: ~
+    creates: master-up.logs
+
+- name: Executes Flannel Scripts
+  shell: flannel.sh > flannel.logs
+  args:
+    chdir: ~
+    creates: flannel.logs
