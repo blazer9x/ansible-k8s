@@ -1,0 +1,22 @@
+---
+- name: Executes Master-Up Command
+  shell: |
+    kubeadm init \
+      --apiserver-advertise-address {{ansible_host}} \
+      --pod-network-cidr {{ansible_host}}/16
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  register: masterstatus
+  args:
+    chdir: "/{{ ansible_user }}"
+    creates: master-up.logs
+
+- name: Debug master-up outputs
+  debug:
+    var: masterstatus.stdout_lines
+
+- name: Copy master-up outputs
+  copy:
+    content: "{{ masterstatus.stdout_lines }}"
+    dest: "/{{ ansible_user }}/master-up.logs"

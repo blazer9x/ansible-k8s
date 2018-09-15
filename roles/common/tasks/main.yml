@@ -27,8 +27,8 @@
 
 # Turn off and disable services
 - selinux:
-    policy: targeted
-    state: permissive
+    #policy: targeted
+    state: disabled
 - service:
     name: iptables
     enabled: no

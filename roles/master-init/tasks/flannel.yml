@@ -7,7 +7,7 @@
     chdir: "/{{ ansible_user }}"
     creates: flannel.logs
 
-- name: debug flannel outputs
+- name: Debug flannel outputs
   debug:
     var: flannelstatus.stdout_lines
 

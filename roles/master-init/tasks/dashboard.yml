@@ -7,7 +7,7 @@
     chdir: "/{{ ansible_user }}"
     creates: dashboard.logs
 
-- name: debug dashboard outputs
+- name: Debug dashboard outputs
   debug:
     var: dashboardstatus.stdout_lines
 

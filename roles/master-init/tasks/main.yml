@@ -2,36 +2,17 @@
 - hostname:
     name: "{{ ansible_hostname }}"
 
-- name: Executes Master-Up Command
-  shell: |
-    kubeadm init \
-      --apiserver-advertise-address {{ansible_host}} \
-      --pod-network-cidr {{ansible_host}}/24 \
-      --apiserver-cert-extra-sans {{ansible_hostname}}.{{common.domain_name}} \
-      --service-dns-domain {{common.domain_name}}
-    mkdir -p $HOME/.kube
-    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  register: masterstatus
-  args:
-    chdir: "/{{ ansible_user }}"
-    creates: master-up.logs
+# K8s Master Scripts
+- include: master-up.yml
 
-- name: debug master-up outputs
-  debug:
-    var: masterstatus.stdout_lines
+# K8s Network Controller Scripts
+- include: calico.yml
 
-- name: Copy master-up outputs
-  copy:
-    content: "{{ masterstatus.stdout_lines }}"
-    dest: "/{{ ansible_user }}/master-up.logs"
-
-- include: canal.yml
-
+# K8s Dashboard Scripts
 #- include: dashboard.yml
 #- include: heapster.yml
 
-- name: Don't run anything on Master with Taint
+- name: Don't run anything on Master K8s with Taint
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
   ignore_errors: yes

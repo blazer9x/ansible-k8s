@@ -1,17 +1,41 @@
 ---
-- name: Executes Calico Scripts
+- name: Get etcd
+  get_url:
+    url: https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/etcd.yaml
+    dest: ~/etcd.yaml
+
+- name: Execute etcd
   shell: |
-    kubectl apply -f https://docs.projectcalico.org/v2.0/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml
+    kubectl apply -f etcd.yaml
+  register: etcdstatus
+  args:
+    chdir: "~"
+    creates: etcd.logs
+
+
+- name: Get rbac
+  get_url:
+    url: https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/rbac.yaml
+    dest: ~/rbac.yaml
+
+- name: Execute rbac
+  shell: |
+    kubectl apply -f rbac.yaml
+  register: rbacstatus
+  args:
+    chdir: "~"
+    creates: rbac.logs
+
+
+- name: Get Calico Scripts
+  get_url:
+    url: https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/calico.yaml
+    dest: ~/calico.yaml
+
+- name: Execute Calico Scripts
+  shell: |
+    kubectl apply -f calico.yaml
   register: calicostatus
   args:
-    chdir: "/{{ ansible_user }}"
+    chdir: "~"
     creates: calico.logs
-
-- name: debug calico outputs
-  debug:
-    var: calicostatus.stdout_lines
-
-- name: Copy calico outputs
-  copy:
-    content: "{{ calicostatus.stdout_lines }}"
-    dest: "/{{ ansible_user }}/calico.logs"
