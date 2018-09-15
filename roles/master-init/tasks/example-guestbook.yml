@@ -1,0 +1,6 @@
+---
+- name: Kubernetes - Guidebook Example
+  copy:
+    src: templates/guestbook
+    dest: ~/examples
+    force: yes
