@@ -1,0 +1,35 @@
+---
+- hostname:
+    name: "{{ ansible_hostname }}"
+
+- name: Clean Yum Transactions
+  shell: |
+    yum-complete-transaction --cleanup-only
+  ignore_errors: yes
+
+- name: Un-install All Kubernetes Repository
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+   - docker-ce
+   - kubelet
+   - kubeadm
+   - kubectl
+
+- name: Clean Mounted Memory in Kubernetes and Docker
+  shell: |
+    for x in `df -h | grep kube`; do umount `echo $x | grep lib | grep kube`; done
+    for x in `df -h | grep docker`; do umount `echo $x | grep lib | grep docker`; done
+  ignore_errors: yes
+
+- name: Removing Kubernetes Directory
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /var/lib/kubelet
+    - /var/lib/calico
+    - /var/lib/etcd
+    - /var/lib/docker*
+    - "/{{ ansible_user }}/master-up.logs"

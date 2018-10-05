@@ -1,9 +1,26 @@
 ---
+# Make Sure Services Enabled
+- service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: restart and reload kubelet
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kubelet
+
+- service:
+    name: kubelet
+    enabled: yes
+    state: started
+
 - name: Executes Master-Up Command
   shell: |
     kubeadm init \
       --apiserver-advertise-address {{ansible_host}} \
-      --pod-network-cidr {{ansible_host}}/16
+      --pod-network-cidr {{ansible_host}}/16 >> master-up.finished
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -16,13 +33,21 @@
   debug:
     var: masterstatus.stdout_lines
 
+- name: Ansible check file exists.
+  stat:
+    path: "/{{ ansible_user }}/master-up.logs"
+  register: masterfile
+
+- debug:
+    msg: "File exists..."
+  when: masterfile.stat.exists
+
+- debug:
+    msg: "File not found"
+  when: masterfile.stat.exists == False
+
 - name: Copy master-up outputs
   copy:
     content: "{{ masterstatus.stdout_lines }}"
     dest: "/{{ ansible_user }}/master-up.logs"
-
-#- name: Edits Master-up.logs
-
-- name: Copy files from source to destination
-  synchronize: src=source dest=destination dirs=yes use_ssh_args=yes
-  delegate_to: "{{ source_ip }}"
+  when: masterfile.stat.exists == False

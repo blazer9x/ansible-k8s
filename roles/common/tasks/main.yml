@@ -7,6 +7,11 @@
     src: hosts.txt
     dest: /etc/hosts
 
+- name: Clean Yum Transactions
+  shell: |
+    yum-complete-transaction --cleanup-only
+  ignore_errors: yes
+
 - name: Install Main Package in Remote Servers
   yum:
     name: "{{ item }}"

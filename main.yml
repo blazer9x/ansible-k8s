@@ -15,8 +15,9 @@
   vars:
     ansible_hostname: "{{ inventory_hostname }}"
   roles:
+    - clean-up
     - common
-    - master-init
+    #- master-init
 
 - name: Worker
   hosts: worker
