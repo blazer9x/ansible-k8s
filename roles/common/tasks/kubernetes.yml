@@ -44,6 +44,13 @@
     name: docker
     enabled: yes
     state: started
+
+- name: restart and reload kubelet
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kubelet
+
 - service:
     name: kubelet
     enabled: yes
