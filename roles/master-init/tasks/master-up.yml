@@ -20,3 +20,9 @@
   copy:
     content: "{{ masterstatus.stdout_lines }}"
     dest: "/{{ ansible_user }}/master-up.logs"
+
+#- name: Edits Master-up.logs
+
+- name: Copy files from source to destination
+  synchronize: src=source dest=destination dirs=yes use_ssh_args=yes
+  delegate_to: "{{ source_ip }}"

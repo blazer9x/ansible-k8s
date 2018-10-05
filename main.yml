@@ -25,3 +25,4 @@
     ansible_hostname: "{{ inventory_hostname }}"
   roles:
     - common
+    - worker

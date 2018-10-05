@@ -52,4 +52,4 @@
 - include: br-netfilter.yml
 
 # Kubernetes Repos and Tools
-- include: kubernetes.yml
+- include: kubernetes-installer.yml
