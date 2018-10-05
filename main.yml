@@ -16,7 +16,7 @@
     ansible_hostname: "{{ inventory_hostname }}"
   roles:
     - clean-up
-    - common
+    #- common
     #- master-init
 
 - name: Worker

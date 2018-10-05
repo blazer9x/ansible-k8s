@@ -28,8 +28,11 @@
     path: "{{ item }}"
     state: absent
   with_items:
+    - /etc/kubernetes
+    - /etc/systemd/system/kubelet.service*
     - /var/lib/kubelet
     - /var/lib/calico
     - /var/lib/etcd
     - /var/lib/docker*
+    - "/{{ ansible_user }}/.kube"
     - "/{{ ansible_user }}/master-up.logs"
