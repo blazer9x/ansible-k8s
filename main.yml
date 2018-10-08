@@ -9,21 +9,30 @@
     with_items:
     - group_vars/main.yml
 
-- name: Master
+- name: Master Clean Up
+  hosts: all
+  remote_user: root
+  vars:
+    ansible_hostname: "{{ inventory_hostname }}"
+    master_clean: "Yes"
+  roles:
+    - clean-up
+
+- name: Master Playbook
   hosts: master
   remote_user: root
   vars:
     ansible_hostname: "{{ inventory_hostname }}"
   roles:
-    - clean-up
-    #- common
-    #- master-init
+    - common
+    - master-init
 
-- name: Worker
+- name: Worker Playbook
   hosts: worker
   remote_user: root
   vars:
     ansible_hostname: "{{ inventory_hostname }}"
+    worker_autojoin: "Yes"
   roles:
     - common
     - worker

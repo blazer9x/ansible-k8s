@@ -27,7 +27,12 @@
   register: masterstatus
   args:
     chdir: "/{{ ansible_user }}"
-    creates: master-up.logs
+    creates: .master-up.runs
+
+- name: Get the command for Worker to Joins
+  shell: |
+    cat master-up.finished | grep kubeadm | grep join
+  register: autojoin
 
 - name: Debug master-up outputs
   debug:
@@ -35,7 +40,7 @@
 
 - name: Ansible check file exists.
   stat:
-    path: "/{{ ansible_user }}/master-up.logs"
+    path: "/{{ ansible_user }}/.master-up.runs"
   register: masterfile
 
 - debug:
@@ -49,5 +54,5 @@
 - name: Copy master-up outputs
   copy:
     content: "{{ masterstatus.stdout_lines }}"
-    dest: "/{{ ansible_user }}/master-up.logs"
+    dest: "/{{ ansible_user }}/.master-up.runs"
   when: masterfile.stat.exists == False
