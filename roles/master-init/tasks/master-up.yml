@@ -31,9 +31,15 @@
 
 - name: Get the command for Worker to Joins
   shell: |
-    cat master-up.finished | grep kubeadm | grep join
-  register: autojoin
+    cat "master-up.finished" | grep kubeadm | grep join | tail -1 > "/{{ ansible_user }}/autojoin.sh"
 
+- name: Copy file from Master to Localhost
+  fetch:
+    src: "/{{ ansible_user }}/autojoin.sh"
+    dest: "/tmp/autojoin.sh"
+    flat: yes
+
+###############################
 - name: Debug master-up outputs
   debug:
     var: masterstatus.stdout_lines

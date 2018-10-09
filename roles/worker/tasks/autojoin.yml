@@ -8,12 +8,19 @@
 #     {{ hostvars[hosts]['ansible_host'] }}
 #   {% endfor %}
 
-- name: Get the command for Worker to Joins
+# - name: Copy Remote-To-Remote (from serverA to serverB)
+#   synchronize:
+#     src: "rsync://{{ hostvars[groups['master'][0]].ansible_eth0.ipv4.address }}/{{ ansible_user }}/autojoin.sh"
+#     dest: "/{{ ansible_user }}/autojoin.sh"
+#     mode: pull
+#   delegate_to: "{{ hostvars[groups['master'][0]].ansible_eth0.ipv4.address }}"
+
+- name: Copy file from Localhost to Worker
   copy:
-    content: "{{ autojoin.stdout_lines }}"
-    dest: "/tmp/auto-join.sh"
+    src: "/tmp/autojoin.sh" #from Localhost
+    dest: "/{{ ansible_user }}/autojoin.sh"
 
 - name: Runs Autojoin.sh to Joining Master Cluster
   shell: |
-    /bin/bash /tmp/auto-join.sh
+    /bin/bash "/{{ ansible_user }}/autojoin.sh"
   ignore_errors: yes

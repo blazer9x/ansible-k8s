@@ -20,6 +20,7 @@
    - libselinux-python
    - epel-release
    - iptables-services
+   - rsync
 
 - name: Install Additional Packages
   yum:
