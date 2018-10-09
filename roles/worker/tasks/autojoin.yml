@@ -1,20 +1,5 @@
 ---
-# Auto Join Logs
-# - name: Copy files from Master to Worker for Auto Join Worker
-#   synchronize: src=source dest=destination dirs=yes use_ssh_args=yes
-#   delegate_to: "{{ source_ip }}"
-#
-#   {% for hosts in groups['master'] %}
-#     {{ hostvars[hosts]['ansible_host'] }}
-#   {% endfor %}
-
-# - name: Copy Remote-To-Remote (from serverA to serverB)
-#   synchronize:
-#     src: "rsync://{{ hostvars[groups['master'][0]].ansible_eth0.ipv4.address }}/{{ ansible_user }}/autojoin.sh"
-#     dest: "/{{ ansible_user }}/autojoin.sh"
-#     mode: pull
-#   delegate_to: "{{ hostvars[groups['master'][0]].ansible_eth0.ipv4.address }}"
-
+# Auto Join 
 - name: Copy file from Localhost to Worker
   copy:
     src: "/tmp/autojoin.sh" #from Localhost
